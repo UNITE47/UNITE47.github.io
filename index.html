@@ -4,35 +4,31 @@
 <script>
   async function logVisitorData() {
     try {
-      const geoRes = await fetch('https://ipapi.co/json/');
-      const geoData = await geoRes.json();
+      const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
       const payload = {
-        ip: geoData.ip,
-        city: geoData.city,
-        region: geoData.region,
-        country: geoData.country_name,
+        ip: ipData.ip,
+        city: ipData.city,
+        region: ipData.region,
+        country: ipData.country_name,
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent
       };
 
-      await fetch('https://script.google.com/macros/s/AKfycbzjyXzYQ20-dO7i7iC8Xdh3cXE9cVzNHUSqVTbuJ4uLyG0pNC803AOaZykjXrRikozO/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      await fetch("https://script.google.com/macros/s/AKfycby7l4ICBVh1oT0F0Is-3OvL9R-FaGAvGryaVPWChteMZkGc2dBjeVewiZgIGWEiOIXD/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      console.log('Visitor logged successfully');
+      console.log("Logged successfully!");
     } catch (err) {
-      console.error('Error logging visitor:', err);
+      console.error("Logging error:", err);
     }
   }
 
   logVisitorData();
 </script>
-
 
 <head>
   <script>
