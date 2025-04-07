@@ -7,20 +7,18 @@
   async function logVisitorData() {
     try {
       const hnyptValue = document.getElementById("hnypt").value;
-
       if (hnyptValue.trim() !== "") {
-        console.warn("Hnypt triggered – bot blocked.");
+        console.warn("Heypt triggered – bot blocked.");
         return;
       }
 
       const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
-      const nowUTC = new Date();
-      const ISTOffset = 5.5 * 60 * 60 * 1000;
-      const nowIST = new Date(nowUTC.getTime() + ISTOffset);
+      const now = new Date();
+      const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
 
-      const pad = num => String(num).padStart(2, '0');
-      const istTimestamp = `${nowIST.getFullYear()}-${pad(nowIST.getMonth() + 1)}-${pad(nowIST.getDate())} ${pad(nowIST.getHours())}:${pad(nowIST.getMinutes())}:${pad(nowIST.getSeconds())} IST`;
+      const format = n => String(n).padStart(2, '0');
+      const istTimestamp = `${istTime.getFullYear()}-${format(istTime.getMonth() + 1)}-${format(istTime.getDate())} ${format(istTime.getHours())}:${format(istTime.getMinutes())}:${format(istTime.getSeconds())} IST`;
 
       const payload = {
         ip: ipData.ip,
@@ -40,7 +38,7 @@
         body: JSON.stringify(payload)
       });
 
-      console.log("Logged successfully!");
+      console.log("Logged successfully with IST timestamp:", istTimestamp);
     } catch (err) {
       console.error("Logging failed:", err);
     }
@@ -48,6 +46,7 @@
 
   logVisitorData();
 </script>
+
 
 <head>
   <script>
