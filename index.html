@@ -15,13 +15,12 @@
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycbyE126epiE7_6ApDi-Tbzj36cAU7UU4lKJ6d8jyvjXkTHMnvGAVwzCnHE9r9EP4vD4P/exec", {
+      await fetch("https://script.google.com/macros/s/AKfycbwfT0A_ru9kLR6GmUcUT4qbc-PJ5XVvjuvzowzsX5mCvBsW-qE7LcEacXby5g_1NrNn/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
-        mode: "no-cors"
+        body: JSON.stringify(payload)
       });
 
       console.log("Logging sent.");
@@ -32,7 +31,6 @@
 
   logVisitorData();
 </script>
-
 
 
 
