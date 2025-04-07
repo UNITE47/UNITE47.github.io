@@ -15,7 +15,7 @@
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycby-K7XFQoXcXxszI83ByG2IR8G9HSc1VblF6sRhe-HWHNbwi4iwlyNOkabLgsT_CAaD/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbyU7VHfBHilbV4bQ5WOO8cxqQaLLXJLc4hiT40Gou5wAjYbT9ILgb5yTdQ1Gjc-iA4/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -23,7 +23,7 @@
         body: JSON.stringify(payload)
       });
 
-      console.log("Logged successfully!");
+      console.log("Logged successfully.");
     } catch (err) {
       console.error("Logging failed:", err);
     }
@@ -31,6 +31,7 @@
 
   logVisitorData();
 </script>
+
 
 
 
