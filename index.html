@@ -4,31 +4,32 @@
 <script>
   async function logVisitorData() {
     try {
-      const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
+      const ipInfo = await fetch("https://ipapi.co/json/").then(res => res.json());
 
       const payload = {
-        ip: ipData.ip,
-        city: ipData.city,
-        region: ipData.region,
-        country: ipData.country_name,
+        ip: ipInfo.ip,
+        city: ipInfo.city,
+        region: ipInfo.region,
+        country: ipInfo.country_name,
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycbwFt0vgzjxfpcbR0yiv6Xztqh_4oWMN9f7UEq3M0b1d7NIqhJQEcL2rQHbaDmDZGLOm/exec", {
+      await fetch("https://script.google.com/macros/s/AKfycbwHJNcQx-emCnJsbPXJm9-vXF21sUhX7wT3DlGpa9isVG61fF6bBt-GwW3p_Ps-J4qf/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      console.log("Logged successfully!");
+      console.log("Logged to Google Sheets");
     } catch (err) {
-      console.error("Logging error:", err);
+      console.error("Logging failed:", err);
     }
   }
 
   logVisitorData();
 </script>
+
 
 <head>
   <script>
