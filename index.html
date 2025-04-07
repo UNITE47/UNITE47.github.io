@@ -20,10 +20,11 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        mode: "no-cors"
       });
 
-      console.log("Logged successfully");
+      console.log("Logging sent.");
     } catch (err) {
       console.error("Logging error:", err);
     }
