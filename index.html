@@ -18,7 +18,7 @@
       const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
 
       const format = n => String(n).padStart(2, '0');
-      const istTimestamp = `${istTime.getFullYear()}-${format(istTime.getMonth() + 1)}-${format(istTime.getDate())} ${format(istTime.getHours())}:${format(istTime.getMinutes())}:${format(istTime.getSeconds())} IST`;
+      const istTimestamp = `${istTime.getDate()}-${format(istTime.getMonth() + 1)}-${format(istTime.getFullYear())} ${format(istTime.getHours())}:${format(istTime.getMinutes())}:${format(istTime.getSeconds())} IST`;
 
       const payload = {
         ip: ipData.ip,
