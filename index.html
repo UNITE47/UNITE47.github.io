@@ -418,25 +418,18 @@
   <!-- main ends here -->
 
   <script>
-    let mouseMoves = 0;
-    let maxScroll = 0;
-    const sessionStart = Date.now();
-  
-    document.addEventListener("mousemove", () => mouseMoves++);
-    document.addEventListener("scroll", () => {
-      const scrolled = window.scrollY + window.innerHeight;
-      maxScroll = Math.max(maxScroll, scrolled);
-    });
-  
     async function logVisitorData() {
       try {
         const hnyptValue = document.getElementById("hnypt").value;
-        if (hnyptValue.trim() !== "") return;
+        if (hnyptValue.trim() !== "") {
+          console.warn("Hnypt triggered – bot blocked.");
+          return;
+        }
   
         const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
   
         const now = new Date();
-        const istOffset = 5.5 * 60;
+        const istOffset = 5.5 * 60
         const utc = now.getTime() + now.getTimezoneOffset() * 60000;
         const istDate = new Date(utc + istOffset * 60000);
   
@@ -448,8 +441,6 @@
         const ss = String(istDate.getSeconds()).padStart(2, "0");
         const formattedIST = `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss} IST`;
   
-        const sessionDuration = Math.floor((Date.now() - sessionStart) / 1000);
-  
         const payload = {
           ip: ipData.ip,
           city: ipData.city,
@@ -457,10 +448,7 @@
           country: ipData.country_name,
           timestamp: formattedIST,
           userAgent: navigator.userAgent,
-          website: hnyptValue,
-          mouseMoves,
-          maxScroll,
-          sessionDuration
+          website: hnyptValue
         };
   
         await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
@@ -468,20 +456,16 @@
           headers: {
             "Content-Type": "application/json"
           },
-          keepalive: true, // <--- This is important for unload
           body: JSON.stringify(payload)
         });
   
-        console.log("Logged successfully!");
+        console.log("Logged successfully with IST time:", formattedIST);
       } catch (err) {
         console.error("Logging failed:", err);
       }
     }
-  
-    window.addEventListener("pagehide", logVisitorData);
+    logVisitorData();
   </script>
-  
-  
 
   <footer id="footer">
     <button class="fas" id="backtotopbutton" onclick="scrolltoTopfunction()">
