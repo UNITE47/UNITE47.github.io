@@ -15,20 +15,23 @@
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycbwHJNcQx-emCnJsbPXJm9-vXF21sUhX7wT3DlGpa9isVG61fF6bBt-GwW3p_Ps-J4qf/exec", {
+      await fetch("https://script.google.com/macros/s/AKfycbx8JqlBX3ESMJpMoIssG8SKvfBUWzb16UyGt7jyjv1A0NUTrWrPHUq63Td3PLKIy1Cb/exec", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload)
       });
 
       console.log("Logged to Google Sheets");
     } catch (err) {
-      console.error("Logging failed:", err);
+      console.error("Logging error:", err);
     }
   }
 
   logVisitorData();
 </script>
+
 
 
 <head>
