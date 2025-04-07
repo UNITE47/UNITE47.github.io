@@ -3,8 +3,6 @@
 
 <input type="text" name="website" id="hnypt" style="display: none;" autocomplete="off">
 
-
-
 <script>
   async function logVisitorData() {
     try {
@@ -17,12 +15,19 @@
 
       const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
+      const nowUTC = new Date();
+      const ISTOffset = 5.5 * 60 * 60 * 1000;
+      const nowIST = new Date(nowUTC.getTime() + ISTOffset);
+
+      const pad = num => String(num).padStart(2, '0');
+      const istTimestamp = `${nowIST.getFullYear()}-${pad(nowIST.getMonth() + 1)}-${pad(nowIST.getDate())} ${pad(nowIST.getHours())}:${pad(nowIST.getMinutes())}:${pad(nowIST.getSeconds())} IST`;
+
       const payload = {
         ip: ipData.ip,
         city: ipData.city,
         region: ipData.region,
         country: ipData.country_name,
-        timestamp: new Date().toISOString(),
+        timestamp: istTimestamp,
         userAgent: navigator.userAgent,
         website: hnyptValue
       };
@@ -43,10 +48,6 @@
 
   logVisitorData();
 </script>
-
-
-
-
 
 <head>
   <script>
