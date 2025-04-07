@@ -15,16 +15,15 @@
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycbz6aQ1x4V8bdyRz3l2jAY5TdZZ1jFdpU-yQCmBkEw0YPHs_kq-ilLikwcDf2jpIUj-R/exec", {
+      await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain"  // prevents preflight
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
-        mode: "no-cors"  // avoids CORS rejection
+        body: JSON.stringify(payload)
       });
 
-      console.log("Logged successfully!");
+      console.log("Visitor logged!");
     } catch (err) {
       console.error("Logging failed:", err);
     }
