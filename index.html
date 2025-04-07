@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<input type="text" name="website" id="hnypt" style="display: none;" autocomplete="off">
+
+
+
 <script>
   async function logVisitorData() {
     try {
+      const hnyptValue = document.getElementById("hnypt").value;
+
+      if (hnyptValue.trim() !== "") {
+        console.warn("Hnypt triggered – bot blocked.");
+        return;
+      }
+
       const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
       const payload = {
@@ -12,7 +23,8 @@
         region: ipData.region,
         country: ipData.country_name,
         timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
+        website: hnyptValue
       };
 
       await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
