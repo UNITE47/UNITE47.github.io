@@ -4,20 +4,19 @@
 <script>
   async function logVisitorData() {
     try {
-      // Step 1: Get IP
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      const ip = data.ip;
+      const geoRes = await fetch('https://ipapi.co/json/');
+      const geoData = await geoRes.json();
 
-      // Step 2: Prepare payload
       const payload = {
-        ip: ip,
+        ip: geoData.ip,
+        city: geoData.city,
+        region: geoData.region,
+        country: geoData.country_name,
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent
       };
 
-      // Step 3: Send data to Google Sheet
-      await fetch('https://sheetdb.io/api/v1/vhun485tr6pht', {
+      await fetch('https://script.google.com/macros/s/AKfycbzjyXzYQ20-dO7i7iC8Xdh3cXE9cVzNHUSqVTbuJ4uLyG0pNC803AOaZykjXrRikozO/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -25,13 +24,12 @@
         body: JSON.stringify(payload)
       });
 
-      console.log('Logged to sheet');
+      console.log('Visitor logged successfully');
     } catch (err) {
-      console.error('Error logging data:', err);
+      console.error('Error logging visitor:', err);
     }
   }
 
-  // Run on page load
   logVisitorData();
 </script>
 
@@ -254,7 +252,7 @@
           thoughtful interactions.
         </p>
         <div class="contact-btn-div" data-aos="fade-up" data-aos-delay="800">
-          <a href="mailto:infoVisheshjangid@gmail.com" tabindex="-1">
+          <a href="" tabindex="-1">
             <button class="letsTalkBtn">
               <p class="letsTalkBtn-text">Let's Talk!</p>
               <span class="letsTalkBtn-BG"></span>
