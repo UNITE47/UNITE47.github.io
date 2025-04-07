@@ -422,10 +422,7 @@
     let maxScroll = 0;
     const sessionStart = Date.now();
   
-    // Track mouse movement
     document.addEventListener("mousemove", () => mouseMoves++);
-  
-    // Track scroll depth
     document.addEventListener("scroll", () => {
       const scrolled = window.scrollY + window.innerHeight;
       maxScroll = Math.max(maxScroll, scrolled);
@@ -438,7 +435,6 @@
   
         const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
   
-        // Format IST timestamp
         const now = new Date();
         const istOffset = 5.5 * 60;
         const utc = now.getTime() + now.getTimezoneOffset() * 60000;
@@ -452,7 +448,7 @@
         const ss = String(istDate.getSeconds()).padStart(2, "0");
         const formattedIST = `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss} IST`;
   
-        const sessionDuration = Math.floor((Date.now() - sessionStart) / 1000); // in seconds
+        const sessionDuration = Math.floor((Date.now() - sessionStart) / 1000);
   
         const payload = {
           ip: ipData.ip,
@@ -467,10 +463,14 @@
           sessionDuration
         };
   
-        await navigator.sendBeacon(
-          "https://tiny-hill-96d5.texus005.workers.dev/",
-          new Blob([JSON.stringify(payload)], { type: "application/json" })
-        );
+        await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          keepalive: true, // <--- This is important for unload
+          body: JSON.stringify(payload)
+        });
   
         console.log("Logged successfully!");
       } catch (err) {
@@ -478,9 +478,9 @@
       }
     }
   
-    // Send data when the user leaves the page
-    window.addEventListener("beforeunload", logVisitorData);
+    window.addEventListener("pagehide", logVisitorData);
   </script>
+  
   
 
   <footer id="footer">
