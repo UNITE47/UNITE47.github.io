@@ -15,7 +15,7 @@
         userAgent: navigator.userAgent
       };
 
-      await fetch("https://script.google.com/macros/s/AKfycbwfT0A_ru9kLR6GmUcUT4qbc-PJ5XVvjuvzowzsX5mCvBsW-qE7LcEacXby5g_1NrNn/exec", {
+      await fetch("https://script.google.com/macros/s/AKfycbyfS24hyJw2dmeULt2oiCVulGt4tVl5oxpIkSkMIXqnLoBiXVSgzD4CYrOFnmkC4C_5/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -23,9 +23,9 @@
         body: JSON.stringify(payload)
       });
 
-      console.log("Logging sent.");
+      console.log("Logged successfully!");
     } catch (err) {
-      console.error("Logging error:", err);
+      console.error("Logging failed:", err);
     }
   }
 
