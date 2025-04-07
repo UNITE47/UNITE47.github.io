@@ -8,24 +8,23 @@
     try {
       const hnyptValue = document.getElementById("hnypt").value;
       if (hnyptValue.trim() !== "") {
-        console.warn("Heypt triggered – bot blocked.");
+        console.warn("Hnypt triggered – bot blocked.");
         return;
       }
 
       const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
-      const now = new Date();
-      const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
-
-      const format = n => String(n).padStart(2, '0');
-      const istTimestamp = `${istTime.getDate()}-${format(istTime.getMonth() + 1)}-${format(istTime.getFullYear())} ${format(istTime.getHours())}:${format(istTime.getMinutes())}:${format(istTime.getSeconds())} IST`;
+      const istTimestamp = new Date().toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        hour12: false
+      });
 
       const payload = {
         ip: ipData.ip,
         city: ipData.city,
         region: ipData.region,
         country: ipData.country_name,
-        timestamp: istTimestamp,
+        timestamp: istTimestamp + " IST",
         userAgent: navigator.userAgent,
         website: hnyptValue
       };
