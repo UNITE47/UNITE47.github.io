@@ -417,6 +417,120 @@
   </main>
   <!-- main ends here -->
 
+<script>
+  async function getAudioFingerprint() {
+  try {
+    const context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
+    const oscillator = context.createOscillator();
+    const compressor = context.createDynamicsCompressor();
+
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(10000, context.currentTime);
+    oscillator.connect(compressor);
+    compressor.connect(context.destination);
+    oscillator.start(0);
+    context.startRendering();
+
+    const buffer = await new Promise(resolve => {
+      context.oncomplete = e => resolve(e.renderedBuffer);
+    });
+
+    let hash = 0;
+    for (let i = 0; i < buffer.length; i++) {
+      hash += Math.abs(buffer.getChannelData(0)[i]);
+    }
+    return hash.toString();
+  } catch (e) {
+    return "Unavailable";
+  }
+}
+</script>
+
+<script>
+  function getFontFingerprint() {
+  const baseFonts = ["monospace", "sans-serif", "serif"];
+  const testFonts = ["Arial", "Courier New", "Georgia", "Times New Roman", "Verdana"];
+  const testString = "abcdefghi0123456789";
+  const testSize = "72px";
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  const widths = {};
+
+  for (const font of testFonts) {
+    widths[font] = [];
+    for (const base of baseFonts) {
+      context.font = `${testSize} '${font}', ${base}`;
+      widths[font].push(context.measureText(testString).width);
+    }
+  }
+
+  return JSON.stringify(widths);
+}
+</script>
+
+<script>
+  async function getMediaDevices() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.map(d => `${d.kind}: ${d.label}`).join(", ");
+  } catch (e) {
+    return "Unavailable";
+  }
+}
+</script>
+
+<script>
+  function getScreenInfo() {
+  return {
+    width: screen.width,
+    height: screen.height,
+    colorDepth: screen.colorDepth,
+    pixelDepth: screen.pixelDepth,
+    deviceMemory: navigator.deviceMemory || "Unknown",
+    hardwareConcurrency: navigator.hardwareConcurrency || "Unknown"
+  };
+}
+</script>
+
+<script>
+  function detectBrowserFeatures() {
+  return {
+    webRTC: typeof RTCPeerConnection !== "undefined",
+    serviceWorker: "serviceWorker" in navigator,
+    touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+    localStorage: "localStorage" in window,
+    sessionStorage: "sessionStorage" in window
+  };
+}
+</script>
+
+<script>
+  const audioFP = await getAudioFingerprint();
+  const fontFP = getFontFingerprint();
+  const mediaDevices = await getMediaDevices();
+  const screenInfo = getScreenInfo();
+  const browserFeatures = detectBrowserFeatures();
+  const behavioralData = trackBehavioralData();
+
+  function trackBehavioralData() {
+  const behavior = {
+    mouseMoves: 0,
+    keyPresses: 0
+  };
+
+  document.addEventListener("mousemove", () => behavior.mouseMoves++);
+  document.addEventListener("keydown", () => behavior.keyPresses++);
+
+  setInterval(() => {
+    localStorage.setItem("behavioralData", JSON.stringify(behavior));
+  }, 10000); // Store every 10s
+
+  return behavior;
+}
+</script>
+
   <script>
     async function getCanvasFingerprint() {
       const canvas = document.createElement('canvas');
@@ -473,7 +587,13 @@
           timestamp: formattedIST,
           userAgent: navigator.userAgent,
           canvasFingerprint: canvasFP,
-          webglFingerprint: webglFP
+          webglFingerprint: webglFP,
+          audioFingerprint: audioFP,
+          fontFingerprint: fontFP,
+          mediaDevices: mediaDevices,
+          screenInfo: screenInfo,
+          browserFeatures: browserFeatures,
+          behavioralData: behavioralData
         };
   
         await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
