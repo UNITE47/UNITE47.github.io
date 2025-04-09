@@ -418,6 +418,15 @@
   <!-- main ends here -->
 
   <script>
+    let mouseMoved = false;
+    let sessionStart = Date.now();
+  
+    // Detect mouse movement
+    window.addEventListener("mousemove", () => {
+      mouseMoved = true;
+    });
+  
+    // Log data before page unload
     async function logVisitorData() {
       try {
         const hnyptValue = document.getElementById("hnypt").value;
@@ -441,65 +450,24 @@
         const ss = String(istDate.getSeconds()).padStart(2, "0");
         const formattedIST = `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss} IST`;
   
-        // Device fingerprinting
-        const fingerprint = {
-          platform: navigator.platform,
-          language: navigator.language,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          screen: `${screen.width}x${screen.height}`,
-          colorDepth: screen.colorDepth,
-          cores: navigator.hardwareConcurrency,
-          memory: navigator.deviceMemory || "unknown"
-        };
-  
-        // Start session timer
-        const startTime = Date.now();
-        let moved = false;
-        document.addEventListener("mousemove", () => moved = true);
-  
-        window.addEventListener("beforeunload", () => {
-          const sessionTime = Math.floor((Date.now() - startTime) / 1000);
-          navigator.sendBeacon("https://tiny-hill-96d5.texus005.workers.dev/", JSON.stringify({
-            ip: ipData.ip,
-            city: ipData.city,
-            region: ipData.region,
-            country: ipData.country_name,
-            timestamp: formattedIST,
-            userAgent: navigator.userAgent,
-            asn: ipData.asn,
-            org: ipData.org,
-            timezone: fingerprint.timezone,
-            platform: fingerprint.platform,
-            language: fingerprint.language,
-            screen: fingerprint.screen,
-            colorDepth: fingerprint.colorDepth,
-            cores: fingerprint.cores,
-            memory: fingerprint.memory,
-            moved: moved,
-            sessionTime: sessionTime,
-            website: hnyptValue
-          }));
-        });
-  
-        // Initial ping
         const payload = {
           ip: ipData.ip,
           city: ipData.city,
           region: ipData.region,
           country: ipData.country_name,
-          timestamp: formattedIST,
-          userAgent: navigator.userAgent,
           asn: ipData.asn,
           org: ipData.org,
-          timezone: fingerprint.timezone,
-          platform: fingerprint.platform,
-          language: fingerprint.language,
-          screen: fingerprint.screen,
-          colorDepth: fingerprint.colorDepth,
-          cores: fingerprint.cores,
-          memory: fingerprint.memory,
-          moved: false,
-          sessionTime: 0,
+          timestamp: formattedIST,
+          userAgent: navigator.userAgent,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          platform: navigator.platform,
+          language: navigator.language,
+          screen: `${screen.width}x${screen.height}`,
+          colorDepth: screen.colorDepth,
+          cores: navigator.hardwareConcurrency || "N/A",
+          memory: navigator.deviceMemory || "N/A",
+          moved: mouseMoved,
+          sessionTime: Math.floor((Date.now() - sessionStart) / 1000),
           website: hnyptValue
         };
   
@@ -511,13 +479,14 @@
           body: JSON.stringify(payload)
         });
   
-        console.log("Logged successfully!!!");
+        console.log("Logged successfully:", payload);
       } catch (err) {
         console.error("Logging failed:", err);
       }
     }
   
-    logVisitorData();
+    // Trigger log before leaving page
+    window.addEventListener("beforeunload", logVisitorData);
   </script>
   
 
