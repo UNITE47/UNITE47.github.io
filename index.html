@@ -418,24 +418,39 @@
   <!-- main ends here -->
 
   <script>
-    let mouseMoved = false;
-    let sessionStart = Date.now();
+    async function getCanvasFingerprint() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.textBaseline = "top";
+      ctx.font = "14px 'Arial'";
+      ctx.fillStyle = "#f60";
+      ctx.fillRect(125, 1, 62, 20);
+      ctx.fillStyle = "#069";
+      ctx.fillText("fingerprint", 2, 15);
+      ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+      ctx.fillText("fingerprint", 4, 17);
+      return canvas.toDataURL();
+    }
   
-    // Detect mouse movement
-    window.addEventListener("mousemove", () => {
-      mouseMoved = true;
-    });
-  
-    // Log data before page unload
-    async function logVisitorData() {
+    async function getWebGLFingerprint() {
       try {
-        const hnyptValue = document.getElementById("hnypt").value;
-        if (hnyptValue.trim() !== "") {
-          console.warn("Honeypot triggered – bot blocked.");
-          return;
-        }
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        return `${vendor} - ${renderer}`;
+      } catch (e) {
+        return "Unavailable";
+      }
+    }
   
+    async function logVisitor() {
+      try {
         const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
+  
+        const canvasFP = await getCanvasFingerprint();
+        const webglFP = await getWebGLFingerprint();
   
         const now = new Date();
         const istOffset = 5.5 * 60;
@@ -455,20 +470,10 @@
           city: ipData.city,
           region: ipData.region,
           country: ipData.country_name,
-          asn: ipData.asn,
-          org: ipData.org,
           timestamp: formattedIST,
           userAgent: navigator.userAgent,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          platform: navigator.platform,
-          language: navigator.language,
-          screen: `${screen.width}x${screen.height}`,
-          colorDepth: screen.colorDepth,
-          cores: navigator.hardwareConcurrency || "N/A",
-          memory: navigator.deviceMemory || "N/A",
-          moved: mouseMoved,
-          sessionTime: Math.floor((Date.now() - sessionStart) / 1000),
-          website: hnyptValue
+          canvasFingerprint: canvasFP,
+          webglFingerprint: webglFP
         };
   
         await fetch("https://tiny-hill-96d5.texus005.workers.dev/", {
@@ -479,15 +484,15 @@
           body: JSON.stringify(payload)
         });
   
-        console.log("Logged successfully:", payload);
+        console.log("Logged:", payload);
       } catch (err) {
-        console.error("Logging failed:", err);
+        console.error("Failed to log:", err);
       }
     }
   
-    // Trigger log before leaving page
-    window.addEventListener("beforeunload", logVisitorData);
+    logVisitor();
   </script>
+  
   
 
   <footer id="footer">
